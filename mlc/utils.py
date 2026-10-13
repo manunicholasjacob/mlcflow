@@ -2,6 +2,7 @@ import sys
 import argparse
 import subprocess
 import re
+import shlex
 import os
 import importlib.util
 import platform
@@ -458,6 +459,11 @@ def save_txt(file_name, string):
 
 
 def convert_args_to_dictionary(inp):
+    # automation/script/module.py passes MLC_SCRIPT_EXTRA_CMD here as one
+    # string. Iterating a str walks it character by character, so every
+    # option in it was silently lost. Split it the way a shell would.
+    if isinstance(inp, str):
+        inp = shlex.split(inp)
     args_dict = {}
     for key in inp:
         if "=" in key:
